@@ -1,0 +1,63 @@
+---
+version : '3.8'
+services:
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+      timeout: 3s
+      retries: 10
+      interval: 3s
+
+  api:
+    image: kempasso/coursework:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+  bot:
+    image: kempasso/coursework:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+    command: python3 manage.py runbot
+
+  collect_static:
+    image: kempasso/coursework:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    env_file: .env
+    entrypoint: ''
+    volumes:
+      - django_static:/code/static/
+    command: python3 manage.py collectstatic -c --no-input
+
+
+  frontend:
+    image: sermalenk/skypro-front:lesson-38
+    ports:
+      - 80:80
+    depends_on:
+      api:
+        condition: service_started
+      collect_static:
+        condition: service_completed_successfully
+    volumes:
+      - django_static:/usr/share/nginx/html/static/
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+
+volumes :
+  diploma_pg_15_data:
+  django_static:
