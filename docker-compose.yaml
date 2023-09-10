@@ -22,7 +22,7 @@ services:
   api:
     build: .
     env_file:
-      - .env
+      - deploy/.env
     environment:
       POSTGRES_HOST: db
     depends_on:
@@ -38,7 +38,7 @@ services:
   bot:
     build: .
     env_file:
-      - .env
+      - deploy/.env
     environment:
       POSTGRES_HOST: db
     depends_on:
@@ -51,7 +51,7 @@ services:
 
   collect_static:
     build: .
-    env_file: .env
+    env_file: deploy/.env
     entrypoint: ''
     volumes:
       - django_static:/code/static/
