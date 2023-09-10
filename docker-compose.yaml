@@ -1,5 +1,5 @@
 ---
-version : '3.8'
+version: '3.8'
 services:
 
   db:
@@ -9,7 +9,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - ${POSTGRES_PORT:-5432}:5432
+      - 5432:5432
     volumes:
       - diploma_pg_data:/var/lib/postgresql/data
     healthcheck:
@@ -71,6 +71,6 @@ services:
       - django_static:/usr/share/nginx/html/static/
       - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf
 
-volumes :
+volumes:
   diploma_pg_data:
   django_static:
