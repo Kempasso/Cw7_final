@@ -57,8 +57,8 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd diploma_work
-            sudo docker-compose pull
-            sudo docker-compose up -d
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose pull
+            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
       - name: Cleanup
         if: always()
         uses: appleboy/ssh-action@master
