@@ -8,8 +8,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - 5432:5432
     volumes:
       - diploma_pg_15_data:/var/lib/postgresql/data
     healthcheck:
@@ -22,6 +20,8 @@ services:
     image: kempasso/coursework:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     env_file:
       - .env
+    environment:
+      POSTGRES_HOST: db
     depends_on:
       db:
         condition: service_healthy
